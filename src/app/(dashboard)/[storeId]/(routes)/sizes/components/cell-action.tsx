@@ -37,9 +37,7 @@ export const CellAction = ({ data }: CellActionProps) => {
       toast.success("Size deleted.");
       router.refresh();
     } catch (error) {
-      toast.error(
-        "Make sure you removed all categories using this size first."
-      );
+      toast.error("Make sure you removed all products using this size first.");
     } finally {
       setOpen(false);
       setLoading(false);

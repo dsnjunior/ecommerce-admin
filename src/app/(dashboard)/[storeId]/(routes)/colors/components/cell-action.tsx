@@ -16,10 +16,10 @@ import {
   DropdownMenu,
 } from "@/components/ui/dropdown-menu";
 
-import { CategoryColumn } from "./columns";
+import { ColorColumn } from "./columns";
 
 interface CellActionProps {
-  data: CategoryColumn;
+  data: ColorColumn;
 }
 
 export const CellAction = ({ data }: CellActionProps) => {
@@ -32,14 +32,12 @@ export const CellAction = ({ data }: CellActionProps) => {
     try {
       setLoading(true);
 
-      await ky.delete(`/api/${params.storeId}/categories/${data.id}`);
+      await ky.delete(`/api/${params.storeId}/colors/${data.id}`);
 
-      toast.success("Category deleted.");
+      toast.success("Color deleted.");
       router.refresh();
     } catch (error) {
-      toast.error(
-        "Make sure you removed all products using this category first."
-      );
+      toast.error("Make sure you removed all products using this color first.");
     } finally {
       setOpen(false);
       setLoading(false);
@@ -48,7 +46,7 @@ export const CellAction = ({ data }: CellActionProps) => {
 
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
-    toast.success("Category ID copied to clipboard.");
+    toast.success("Color ID copied to clipboard.");
   };
 
   return (
@@ -72,9 +70,7 @@ export const CellAction = ({ data }: CellActionProps) => {
             <Copy className="mr-2 h-4 w-4" /> Copy Id
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() =>
-              router.push(`/${params.storeId}/categories/${data.id}`)
-            }
+            onClick={() => router.push(`/${params.storeId}/colors/${data.id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
