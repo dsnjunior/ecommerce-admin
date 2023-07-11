@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { dateTimeFormat } from "@/lib/utils";
 
 import { CategoryColumn } from "./components/columns";
 import { CategoryClient } from "./components/client";
@@ -24,7 +25,7 @@ const CategoriesPage = async ({ params }: CategoriesPageProps) => {
     id: item.id,
     name: item.name,
     billboardLabel: item.billboard.label,
-    createdAt: Intl.DateTimeFormat().format(item.createdAt),
+    createdAt: dateTimeFormat(item.createdAt),
   }));
 
   return (

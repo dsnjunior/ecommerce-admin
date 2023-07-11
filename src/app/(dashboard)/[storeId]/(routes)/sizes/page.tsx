@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { dateTimeFormat } from "@/lib/utils";
 
 import { SizeColumn } from "./components/columns";
 import { SizeClient } from "./components/client";
@@ -21,7 +22,7 @@ const BillboardsPage = async ({ params }: BillboardsPageProps) => {
     id: item.id,
     name: item.name,
     value: item.value,
-    createdAt: Intl.DateTimeFormat().format(item.createdAt),
+    createdAt: dateTimeFormat(item.createdAt),
   }));
 
   return (

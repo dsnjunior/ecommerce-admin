@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { dateTimeFormat } from "@/lib/utils";
 
 import { BillboardColumn } from "./components/columns";
 import { BillboardClient } from "./components/client";
@@ -20,7 +21,7 @@ const BillboardsPage = async ({ params }: BillboardsPageProps) => {
   const formattedBillboards: BillboardColumn[] = billboards.map((item) => ({
     id: item.id,
     label: item.label,
-    createdAt: Intl.DateTimeFormat().format(item.createdAt),
+    createdAt: dateTimeFormat(item.createdAt),
   }));
 
   return (
