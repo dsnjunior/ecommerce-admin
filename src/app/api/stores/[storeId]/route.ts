@@ -11,7 +11,13 @@ export async function PATCH(
     const { userId } = auth();
     const body = await req.json();
 
-    const { name, zipCode } = body;
+    const {
+      name,
+      zipCode,
+      storeUrl,
+      storeSuccessSaleUrl,
+      storeCancelledSaleUrl,
+    } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -23,6 +29,20 @@ export async function PATCH(
 
     if (!zipCode) {
       return new NextResponse("Zip code is required", { status: 400 });
+    }
+
+    if (!storeUrl) {
+      return new NextResponse("Url is required", { status: 400 });
+    }
+
+    if (!storeSuccessSaleUrl) {
+      return new NextResponse("Success sale url is required", { status: 400 });
+    }
+
+    if (!storeCancelledSaleUrl) {
+      return new NextResponse("Cancelled sale url is required", {
+        status: 400,
+      });
     }
 
     if (!params.storeId) {
@@ -37,6 +57,9 @@ export async function PATCH(
       data: {
         name,
         zipCode,
+        storeUrl,
+        storeSuccessSaleUrl,
+        storeCancelledSaleUrl,
       },
     });
 

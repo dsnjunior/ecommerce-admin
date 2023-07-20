@@ -31,6 +31,9 @@ import {
 const formSchema = z.object({
   name: z.string().min(2),
   zipCode: z.string().min(8).max(8),
+  storeUrl: z.string().url().nonempty(),
+  storeSuccessSaleUrl: z.string().url().nonempty(),
+  storeCancelledSaleUrl: z.string().url().nonempty(),
 });
 
 type SettingsFormValues = z.infer<typeof formSchema>;
@@ -143,6 +146,73 @@ export const SettingsForm = ({ initialData }: SettingsFormProps) => {
                   </FormControl>
                   <FormMessage />
                   <FormDescription>Only numbers.</FormDescription>
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-8">
+            <FormField
+              control={form.control}
+              name="storeUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Store URL</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Store URL"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                  <FormDescription>
+                    Eg.: <code>https://store.com</code>
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-8">
+            <FormField
+              control={form.control}
+              name="storeSuccessSaleUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Store success sale URL</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Store success sale URL"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                  <FormDescription>
+                    Store URL to be redirected when buyer finishes buying.{" "}
+                    <br />
+                    Eg.: <code>https://store.com/checkout/success</code>
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="storeCancelledSaleUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Store cancelled sale URL</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Store success sale URL"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                  <FormDescription>
+                    Store URL to be redirected when buyer cancel buying. <br />
+                    Eg.: <code>https://store.com/checkout/cancelled</code>
+                  </FormDescription>
                 </FormItem>
               )}
             />

@@ -78,7 +78,7 @@ export async function GET(
 
     return NextResponse.json({
       shipping: {
-        deadline: `${shipping.PrazoEntrega} dias úteis`,
+        deadline: `${Number(shipping.PrazoEntrega) + 2} dias úteis`,
         price: Number(shipping.Valor.replace(",", "")),
       },
       destination: destinationInformation,
