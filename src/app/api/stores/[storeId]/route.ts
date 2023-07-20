@@ -11,7 +11,7 @@ export async function PATCH(
     const { userId } = auth();
     const body = await req.json();
 
-    const { name } = body;
+    const { name, zipCode } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -19,6 +19,10 @@ export async function PATCH(
 
     if (!name) {
       return new NextResponse("Name is required", { status: 400 });
+    }
+
+    if (!zipCode) {
+      return new NextResponse("Zip code is required", { status: 400 });
     }
 
     if (!params.storeId) {
@@ -32,6 +36,7 @@ export async function PATCH(
       },
       data: {
         name,
+        zipCode,
       },
     });
 
