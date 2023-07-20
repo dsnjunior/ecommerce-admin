@@ -21,6 +21,7 @@ import { AlertModal } from "@/components/modals/alert-modal";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -29,6 +30,7 @@ import {
 
 const formSchema = z.object({
   name: z.string().min(2),
+  zipCode: z.string().min(8).max(8),
 });
 
 type SettingsFormValues = z.infer<typeof formSchema>;
@@ -125,6 +127,26 @@ export const SettingsForm = ({ initialData }: SettingsFormProps) => {
               )}
             />
           </div>
+          <div className="grid grid-cols-3 gap-8">
+            <FormField
+              control={form.control}
+              name="zipCode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Zip code</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Zip code"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                  <FormDescription>Only numbers.</FormDescription>
+                </FormItem>
+              )}
+            />
+          </div>
           <Button disabled={loading} className="ml-auto" type="submit">
             Save changes
           </Button>
@@ -135,6 +157,11 @@ export const SettingsForm = ({ initialData }: SettingsFormProps) => {
         title="NEXT_PUBLIC_API_URL"
         variant="public"
         description={`${origin}/api/${params.storeId}`}
+      />
+      <ApiAlert
+        title="GET"
+        variant="public"
+        description={`${origin}/api/${params.storeId}/calculate-shipping`}
       />
     </>
   );
