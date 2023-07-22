@@ -159,9 +159,15 @@ export async function POST(
     });
   });
 
+  const deliveryDeadline = new Date(Date.now());
+  deliveryDeadline.setDate(
+    deliveryDeadline.getDate() + shippingOptionParsed.data.PrazoEntrega
+  );
+
   const order = await db.order.create({
     data: {
       ...shippingParsed.data,
+      deliveryDeadline,
       shippingCost: shippingOptionParsed.data.Valor,
       storeId: params.storeId,
       isPaid: false,
@@ -202,8 +208,9 @@ export async function POST(
       },
     ],
     mode: "payment",
-    success_url: store.storeSuccessSaleUrl,
+    success_url: `${store.storeSuccessSaleUrl}?order=${order.id}`,
     cancel_url: store.storeCancelledSaleUrl,
+    customer_email: shippingParsed.data.email,
     metadata: {
       orderId: order.id,
     },
