@@ -53,6 +53,11 @@ export function MainNav({
       label: "Settings",
       active: pathname === `/${params.storeId}/settings`,
     },
+    {
+      href: `/${params.storeId}/email-settings`,
+      label: "Email Settings",
+      active: pathname === `/${params.storeId}/email-settings`,
+    },
   ];
 
   return (

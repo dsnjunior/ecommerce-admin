@@ -12,22 +12,62 @@ datasource db {
 }
 
 model Store {
-  id                    String      @id @default(cuid())
+  id                    String        @id @default(cuid())
   name                  String
   userId                String
-  zipCode               String      @default("")
-  storeUrl              String      @default("")
-  storeSuccessSaleUrl   String      @default("")
-  storeCancelledSaleUrl String      @default("")
-  billboards            Billboard[] @relation("StoreToBillboard")
-  categories            Category[]  @relation("StoreToCategory")
-  sizes                 Size[]      @relation("StoreToSize")
-  colors                Color[]     @relation("StoreToColor")
-  products              Product[]   @relation("StoreToProduct")
-  orders                Order[]     @relation("StoreToOrder")
+  zipCode               String        @default("")
+  storeUrl              String        @default("")
+  storeSuccessSaleUrl   String        @default("")
+  storeCancelledSaleUrl String        @default("")
+  billboards            Billboard[]   @relation("StoreToBillboard")
+  categories            Category[]    @relation("StoreToCategory")
+  sizes                 Size[]        @relation("StoreToSize")
+  colors                Color[]       @relation("StoreToColor")
+  products              Product[]     @relation("StoreToProduct")
+  orders                Order[]       @relation("StoreToOrder")
+  emailSettings         EmailSettings?
 
-  createdAt             DateTime    @default(now())
-  updatedAt             DateTime    @updatedAt
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+}
+
+model EmailSettings {
+  id                              String    @id @default(cuid())
+  storeId                         String    @unique
+  store                           Store     @relation(fields: [storeId], references: [id])
+
+  from                            String    @default("")
+  replyTo                         String    @default("")
+
+  name                            String    @default("")
+  officialName                    String    @default("")
+  address                         String    @default("")
+  logoUrl                         String    @default("")
+
+  orderConfirmationSubject        String    @default("Recebemos seu pedido!")
+  orderConfirmationTitle          String    @default("Recebemos seu pedido!")
+  orderConfirmationSubtitle       String    @default("Quando o pagamento for processado voltaremos com mais informações.")
+  orderConfirmationDescription    String    @default("")
+
+  paymentConfirmationSubject      String    @default("O Pagamento foi aprovado!")
+  paymentConfirmationTitle        String    @default("O Pagamento foi aprovado!")
+  paymentConfirmationSubtitle     String    @default("Agora vamos enviar seu pedido. Em até dois dias úteis você receberá o código de rastreio.")
+  paymentConfirmationDescription  String    @default("")
+
+  shippingConfirmationSubject     String    @default("Seus produtos estão a caminho!")
+  shippingConfirmationTitle       String    @default("Está a caminho!")
+  shippingConfirmationSubtitle    String    @default("Seu pedido foi enviado!")
+  shippingConfirmationDescription String    @default("")
+
+  deliveryConfirmationSubject     String    @default("Seu pedido chegou!")
+  deliveryConfirmationTitle       String    @default("Seu pedido chegou!")
+  deliveryConfirmationSubtitle    String    @default("Esperamos que esteja tudo certo.")
+  deliveryConfirmationDescription String    @default("Caso tenha algum problema no pedido, alguma dúvida ou sugestão por favor entre em contato com a gente!")
+
+  createdAt                       DateTime  @default(now())
+  updatedAt                       DateTime  @updatedAt
+
+  @@index([storeId])
 }
 
 model Billboard {
