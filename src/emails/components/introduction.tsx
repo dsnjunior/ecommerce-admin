@@ -1,29 +1,36 @@
 import { Section, Img, Heading, Text } from "@react-email/components";
 
-import { globals } from "../styles";
+import { globals, paddingY } from "../styles";
 import { Divider } from "./divider";
 
 export type IntroductionProps = {
   title: string;
   subtitle: string;
   description?: string;
+  logo: string;
+  storeName: string;
 };
 
 export function Introduction({
+  logo,
+  storeName,
   title,
   subtitle,
   description,
 }: IntroductionProps) {
   return (
     <>
-      <Section style={message}>
+      <Section style={{ backgroundColor: "rgb(195, 181, 253)" }}>
         <Img
-          src={`/email/look-here-logo.png`}
-          width="66"
-          height="22"
-          alt=""
+          src={logo}
+          width="120"
+          height="120"
+          alt={storeName}
           style={{ margin: "auto" }}
         />
+      </Section>
+      <Divider />
+      <Section style={message}>
         <Heading style={globals.heading}>{title}</Heading>
         <Text style={{ ...globals.text, fontSize: "20px" }}>{subtitle}</Text>
         {description && (
@@ -38,6 +45,6 @@ export function Introduction({
 }
 
 const message = {
-  padding: "40px 74px",
+  padding: "20px 74px 40px",
   textAlign: "center",
 } as React.CSSProperties;

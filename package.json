@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "email": "email dev --port 3003 --dir src/emails/examples"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.21.13",

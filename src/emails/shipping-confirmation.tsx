@@ -1,48 +1,41 @@
-import { Layout } from "@/emails/components/layout";
-import { Tracking } from "@/emails/components/tracking";
-import { Introduction } from "@/emails/components/introduction";
-import { Destination } from "@/emails/components/destination";
-import { Product } from "@/emails/components/product";
-import { OrderInformation } from "@/emails/components/order-information";
-import { Footer, FooterProps } from "@/emails/components/footer";
+import { Layout, LayoutProps } from "./components/layout";
+import { Tracking, TrackingProps } from "./components/tracking";
+import { Introduction, IntroductionProps } from "./components/introduction";
+import { Destination, DestinationProps } from "./components/destination";
+import { Product, ProductProps } from "./components/product";
+import {
+  OrderInformation,
+  OrderInformationProps,
+} from "./components/order-information";
+import { Footer, FooterProps } from "./components/footer";
 
-const products = [
-  {
-    name: "Print J-Hope Mama 2022",
-    quantity: 2,
-    size: "Print A6 (14,5 x 10 aproximadamente)",
-    thumbnail: "/images/products/print-j-hope-mama-2022.png",
-  },
-  {
-    name: "Print J-Hope On The Street",
-    quantity: 1,
-    size: "Print A6 (14,5 x 10 aproximadamente)",
-    thumbnail: "/images/products/print-j-hope-on-the-street.png",
-  },
-];
-
-type ShippingConfirmationProps = {
+export interface ShippingConfirmationProps {
+  config: Omit<LayoutProps, "children">;
+  tracking: TrackingProps;
+  introduction: IntroductionProps;
+  destination: DestinationProps;
+  products: ProductProps[];
+  orderInformation: OrderInformationProps;
   footer: FooterProps;
-};
+}
 
-export const ShippingConfirmation = ({ footer }: ShippingConfirmationProps) => (
-  <Layout preview="Seus produtos estão a caminho! 😎🫰">
-    <Tracking trackCode="OG01234567890" trackUrl="#" />
-    <Introduction
-      title="Está a caminho!"
-      subtitle="Seu pedido foi enviado! 😎🫰"
-    />
-    <Destination clientAddress="Amapá" clientName="Daniel" />
+export const ShippingConfirmation = ({
+  config,
+  tracking,
+  introduction,
+  destination,
+  products,
+  orderInformation,
+  footer,
+}: ShippingConfirmationProps) => (
+  <Layout {...config}>
+    <Tracking {...tracking} />
+    <Introduction {...introduction} />
+    <Destination {...destination} />
     {products.map((product) => (
       <Product key={product.thumbnail} {...product} />
     ))}
-    <OrderInformation
-      orderCode="#00001"
-      orderDate="02/06/2023"
-      orderDetailsUrl="#"
-    />
+    <OrderInformation {...orderInformation} />
     <Footer {...footer} />
   </Layout>
 );
-
-export default ShippingConfirmation;

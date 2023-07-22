@@ -5,6 +5,8 @@ import { calcularPrecoPrazo } from "correios-brasil";
 
 import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
+import { resend } from "@/emails/sender";
+import { OrderConfirmation } from "@/emails/order-confirmation";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -94,6 +96,11 @@ export async function POST(
       storeUrl: true,
       storeSuccessSaleUrl: true,
       storeCancelledSaleUrl: true,
+      emailSettings: true,
+      // TODO: order categories by some criteria
+      categories: {
+        take: 4,
+      },
     },
   });
 
@@ -185,6 +192,20 @@ export async function POST(
         })),
       },
     },
+    include: {
+      orderItems: {
+        include: {
+          product: {
+            include: {
+              size: true,
+              images: {
+                take: 1,
+              },
+            },
+          },
+        },
+      },
+    },
   });
 
   const session = await stripe.checkout.sessions.create({
@@ -215,6 +236,48 @@ export async function POST(
       orderId: order.id,
     },
   });
+
+  if (store.emailSettings) {
+    await resend.sendEmail({
+      to: order.email,
+      from: store.emailSettings.from,
+      subject: store.emailSettings.orderConfirmationSubject,
+      react: OrderConfirmation({
+        config: {
+          preview: store.emailSettings.orderConfirmationSubject,
+        },
+        introduction: {
+          title: store.emailSettings.orderConfirmationTitle,
+          description: store.emailSettings.orderConfirmationDescription,
+          subtitle: store.emailSettings.orderConfirmationSubtitle,
+          logo: store.emailSettings.logoUrl,
+          storeName: store.emailSettings.name,
+        },
+        footer: {
+          address: store.emailSettings.address,
+          links: store.categories.map((category) => ({
+            label: category.name,
+            url: `${store.storeUrl}/${category.id}`,
+          })),
+          name: store.emailSettings.name,
+          officialName: store.emailSettings.officialName,
+        },
+        orderInformation: {
+          orderCode: order.id,
+          orderDate: order.createdAt,
+          orderDetailsUrl: "#",
+        },
+        products: order.orderItems.map((orderItem) => ({
+          name: orderItem.product.name,
+          quantity: orderItem.quantity,
+          size: `${orderItem.product.size.name} (${orderItem.product.size.value})`,
+          thumbnail: orderItem.product.images[0].url,
+        })),
+      }),
+    });
+  } else {
+    // TODO: Send warning email
+  }
 
   return NextResponse.json(
     { url: session.url },

@@ -3,9 +3,16 @@ import { Section, Row, Column, Link, Text } from "@react-email/components";
 import { track, globals } from "../styles";
 import { Divider } from "./divider";
 
+const formatter = Intl.DateTimeFormat("pt-BR", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  timeZone: "America/Sao_Paulo",
+});
+
 export type OrderInformationProps = {
   orderCode: string;
-  orderDate: string;
+  orderDate: Date;
   orderDetailsUrl: string;
 };
 
@@ -24,7 +31,7 @@ export function OrderInformation({
           </Column>
           <Column>
             <Text style={globals.paragraphWithBold}>Data da compra</Text>
-            <Text style={track.code}>{orderDate}</Text>
+            <Text style={track.code}>{formatter.format(orderDate)}</Text>
           </Column>
         </Row>
         <Row>

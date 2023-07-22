@@ -7,9 +7,10 @@ export type FooterProps = {
   name: string;
   officialName: string;
   address: string;
+  links: { label: string; url: string }[];
 };
 
-export function Footer({ address, name, officialName }: FooterProps) {
+export function Footer({ address, name, officialName, links }: FooterProps) {
   return (
     <>
       <Section style={{ ...paddingY, backgroundColor: "rgb(195, 181, 253)" }}>
@@ -17,54 +18,20 @@ export function Footer({ address, name, officialName }: FooterProps) {
           look<span style={{ color: "#5b21b6" }}>here</span>.store
         </Text>
         <Row style={categories.container}>
-          <Column align="center">
-            <Link
-              href="/"
-              style={{
-                ...categories.text,
-                textDecoration: "underline",
-                textUnderlineOffset: 5,
-              }}
-            >
-              Prints
-            </Link>
-          </Column>
-          <Column align="center">
-            <Link
-              href="/"
-              style={{
-                ...categories.text,
-                textDecoration: "underline",
-                textUnderlineOffset: 5,
-              }}
-            >
-              Cadernetas
-            </Link>
-          </Column>
-          <Column align="center">
-            <Link
-              href="/"
-              style={{
-                ...categories.text,
-                textDecoration: "underline",
-                textUnderlineOffset: 5,
-              }}
-            >
-              Chaveiros
-            </Link>
-          </Column>
-          <Column align="center">
-            <Link
-              href="/"
-              style={{
-                ...categories.text,
-                textDecoration: "underline",
-                textUnderlineOffset: 5,
-              }}
-            >
-              Adesivos
-            </Link>
-          </Column>
+          {links.map(({ label, url }) => (
+            <Column key={label} align="center">
+              <Link
+                href={url}
+                style={{
+                  ...categories.text,
+                  textDecoration: "underline",
+                  textUnderlineOffset: 5,
+                }}
+              >
+                {label}
+              </Link>
+            </Column>
+          ))}
         </Row>
       </Section>
       <Divider />
