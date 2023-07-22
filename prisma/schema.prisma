@@ -127,29 +127,31 @@ model Image {
 }
 
 model Order {
-  id            String      @id @default(cuid())
-  storeId       String
-  store         Store       @relation("StoreToOrder", fields: [storeId], references: [id])
-  orderItems    OrderItem[]
-  isPaid        Boolean     @default(false)
+  id                String      @id @default(cuid())
+  storeId           String
+  store             Store       @relation("StoreToOrder", fields: [storeId], references: [id])
+  orderItems        OrderItem[]
+  isPaid            Boolean     @default(false)
+  archived          Boolean     @default(false)
 
-  destination   String
-  localidade    String
-  logradouro    String
-  bairro        String
-  complemento   String
-  numero        String
-  uf            String
-  shippingCost  Int
+  destination       String
+  localidade        String
+  logradouro        String
+  bairro            String
+  complemento       String
+  numero            String
+  uf                String
+  shippingCost      Int
+  deliveryDeadline  DateTime
 
-  name          String
-  surname       String
-  cpf           String
-  email         String
-  phone         String
+  name              String
+  surname           String
+  cpf               String
+  email             String
+  phone             String
 
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
 
   @@index([storeId])
 }
