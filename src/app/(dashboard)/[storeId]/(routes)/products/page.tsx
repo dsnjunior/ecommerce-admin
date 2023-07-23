@@ -27,6 +27,7 @@ const ProductsPage = async ({ params }: ProductsPageProps) => {
       color: {
         select: {
           name: true,
+          value: true,
         },
       },
     },
@@ -41,7 +42,7 @@ const ProductsPage = async ({ params }: ProductsPageProps) => {
     price: currencyFormat(item.price),
     category: item.category.name,
     size: item.size.name,
-    color: item.color.name,
+    color: item.color,
     isArchived: item.isArchived,
     isFeatured: item.isFeatured,
     createdAt: dateTimeFormat(item.createdAt),

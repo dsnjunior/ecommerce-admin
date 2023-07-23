@@ -45,7 +45,7 @@ const OrderPage = async ({ params }: OrdersPageProps) => {
     price: currencyFormat(item.price),
     category: item.product.category.name,
     size: item.product.size.name,
-    color: item.product.color.name,
+    color: item.product.color,
     quantity: item.quantity,
     createdAt: dateTimeFormat(item.createdAt),
   }));
