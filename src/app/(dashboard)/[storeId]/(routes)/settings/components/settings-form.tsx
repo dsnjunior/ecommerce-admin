@@ -76,7 +76,7 @@ export const SettingsForm = ({ initialData }: SettingsFormProps) => {
       router.push("/");
       toast.success("Store deleted.");
     } catch (error: any) {
-      toast.error("Make sure you removed all products and categories first.");
+      toast.error("Something went wrong.");
     } finally {
       setLoading(false);
       setOpen(false);
