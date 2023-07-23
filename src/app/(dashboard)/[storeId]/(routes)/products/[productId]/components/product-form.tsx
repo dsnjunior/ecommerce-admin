@@ -75,9 +75,13 @@ export const ProductForm = ({
   const toastMessage = initialData ? "Product updated." : "Product created.";
   const action = initialData ? "Save changes" : "Create";
 
+  if (initialData) {
+    initialData.price = initialData.price / 100;
+  }
+
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || {
+    defaultValues: initialData ?? {
       categoryId: "",
       colorId: "",
       sizeId: "",

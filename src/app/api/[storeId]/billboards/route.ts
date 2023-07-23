@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs";
 
 import { db } from "@/lib/db";
+import { optimizeImage, srcSet, webp } from "@/lib/image";
 
 export async function POST(
   req: Request,
@@ -44,7 +45,11 @@ export async function POST(
     const billboard = await db.billboard.create({
       data: {
         label,
-        imageUrl,
+        imageUrl: optimizeImage(imageUrl),
+        originalUrl: imageUrl,
+        srcSet: srcSet(optimizeImage(imageUrl)),
+        webpUrl: webp(imageUrl),
+        webpSrcSet: srcSet(webp(imageUrl)),
         storeId: params.storeId,
       },
     });

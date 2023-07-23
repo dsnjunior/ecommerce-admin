@@ -12,29 +12,29 @@ datasource db {
 }
 
 model Store {
-  id                    String        @id @default(cuid())
+  id                    String          @id @default(cuid())
   name                  String
   userId                String
-  zipCode               String        @default("")
-  storeUrl              String        @default("")
-  storeSuccessSaleUrl   String        @default("")
-  storeCancelledSaleUrl String        @default("")
-  billboards            Billboard[]   @relation("StoreToBillboard")
-  categories            Category[]    @relation("StoreToCategory")
-  sizes                 Size[]        @relation("StoreToSize")
-  colors                Color[]       @relation("StoreToColor")
-  products              Product[]     @relation("StoreToProduct")
-  orders                Order[]       @relation("StoreToOrder")
+  zipCode               String          @default("")
+  storeUrl              String          @default("")
+  storeSuccessSaleUrl   String          @default("")
+  storeCancelledSaleUrl String          @default("")
+  billboards            Billboard[]     @relation("StoreToBillboard")
+  categories            Category[]      @relation("StoreToCategory")
+  sizes                 Size[]          @relation("StoreToSize")
+  colors                Color[]         @relation("StoreToColor")
+  products              Product[]       @relation("StoreToProduct")
+  orders                Order[]         @relation("StoreToOrder")
   emailSettings         EmailSettings?
 
-  createdAt             DateTime      @default(now())
-  updatedAt             DateTime      @updatedAt
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
 }
 
 model EmailSettings {
   id                              String    @id @default(cuid())
   storeId                         String    @unique
-  store                           Store     @relation(fields: [storeId], references: [id])
+  store                           Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
 
   from                            String    @default("")
   replyTo                         String    @default("")
@@ -75,8 +75,13 @@ model Billboard {
   storeId     String
   store       Store       @relation("StoreToBillboard", fields: [storeId], references: [id])
   label       String
-  imageUrl    String
   categories  Category[]
+
+  imageUrl    String
+  srcSet      String      @default("") @db.Text
+  webpUrl     String      @default("")
+  webpSrcSet  String      @default("") @db.Text
+  originalUrl String      @default("")
 
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
@@ -158,7 +163,12 @@ model Image {
   id          String      @id @default(cuid())
   productId   String
   product     Product     @relation("ProductToImage", fields: [productId], references: [id], onDelete: Cascade)
+
   url         String
+  srcSet      String      @default("") @db.Text
+  webpUrl     String      @default("")
+  webpSrcSet  String      @default("") @db.Text
+  originalUrl String      @default("")
 
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt

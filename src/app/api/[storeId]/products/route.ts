@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs";
 
 import { db } from "@/lib/db";
+import { optimizeImage, srcSet, webp } from "@/lib/image";
 
 export async function POST(
   req: Request,
@@ -78,7 +79,13 @@ export async function POST(
         storeId: params.storeId,
         images: {
           createMany: {
-            data: [...images.map((image: { url: string }) => image)],
+            data: images.map((image: { url: string }) => ({
+              originalUrl: image.url,
+              url: optimizeImage(image.url),
+              srcSet: srcSet(optimizeImage(image.url)),
+              webpUrl: webp(image.url),
+              webpSrcSet: srcSet(webp(image.url)),
+            })),
           },
         },
       },

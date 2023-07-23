@@ -2,8 +2,6 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { CellAction } from "./cell-action";
-
 export type ProductColumn = {
   id: string;
   name: string;
@@ -15,8 +13,7 @@ export type ProductColumn = {
     value: string;
   };
   createdAt: string;
-  isFeatured: boolean;
-  isArchived: boolean;
+  quantity: number;
 };
 
 export const columns: ColumnDef<ProductColumn>[] = [
@@ -25,16 +22,12 @@ export const columns: ColumnDef<ProductColumn>[] = [
     header: "Name",
   },
   {
-    accessorKey: "isArchived",
-    header: "Archived",
-  },
-  {
-    accessorKey: "isFeatured",
-    header: "Featured",
-  },
-  {
     accessorKey: "price",
     header: "Price",
+  },
+  {
+    accessorKey: "quantity",
+    header: "Quantity",
   },
   {
     accessorKey: "category",
@@ -56,13 +49,5 @@ export const columns: ColumnDef<ProductColumn>[] = [
         />
       </div>
     ),
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Date",
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => <CellAction data={row.original} />,
   },
 ];

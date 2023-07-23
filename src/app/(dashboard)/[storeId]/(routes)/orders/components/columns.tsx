@@ -1,6 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
 
 export type OrderColumn = {
   id: string;
@@ -16,6 +17,9 @@ export const columns: ColumnDef<OrderColumn>[] = [
   {
     accessorKey: "products",
     header: "Products",
+    cell: ({ row }) => (
+      <Link href={`orders/${row.original.id}`}>{row.original.products}</Link>
+    ),
   },
   {
     accessorKey: "phone",

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs";
 
 import { db } from "@/lib/db";
+import { srcSet, optimizeImage, webp } from "@/lib/image";
 
 export async function GET(
   req: Request,
@@ -155,6 +156,14 @@ export async function PATCH(
       },
     });
 
+    const imagesGenerated = images.map((image: { url: string }) => ({
+      originalUrl: image.url,
+      url: optimizeImage(image.url),
+      srcSet: srcSet(optimizeImage(image.url)),
+      webpUrl: webp(image.url),
+      webpSrcSet: srcSet(webp(image.url)),
+    }));
+
     const product = await db.product.update({
       where: {
         id: params.productId,
@@ -162,7 +171,7 @@ export async function PATCH(
       data: {
         images: {
           createMany: {
-            data: [...images.map((image: { url: string }) => image)],
+            data: imagesGenerated,
           },
         },
       },
