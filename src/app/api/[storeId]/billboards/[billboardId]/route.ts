@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs";
 
 import { db } from "@/lib/db";
+import { optimizeImage, srcSet } from "@/lib/image";
 
 export async function GET(
   req: Request,
@@ -108,7 +109,9 @@ export async function PATCH(
       },
       data: {
         label,
-        imageUrl,
+        imageUrl: optimizeImage(imageUrl),
+        originalUrl: imageUrl,
+        srcSet: srcSet(imageUrl),
       },
     });
 

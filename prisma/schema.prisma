@@ -75,8 +75,11 @@ model Billboard {
   storeId     String
   store       Store       @relation("StoreToBillboard", fields: [storeId], references: [id])
   label       String
-  imageUrl    String
   categories  Category[]
+
+  imageUrl    String
+  srcSet      String      @default("") @db.Text
+  originalUrl String      @default("")
 
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
@@ -158,7 +161,10 @@ model Image {
   id          String      @id @default(cuid())
   productId   String
   product     Product     @relation("ProductToImage", fields: [productId], references: [id], onDelete: Cascade)
+
   url         String
+  srcSet      String      @default("") @db.Text
+  originalUrl String      @default("")
 
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
