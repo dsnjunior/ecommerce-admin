@@ -82,6 +82,8 @@ export async function PATCH(
 
     const {
       name,
+      slug,
+      description,
       price,
       categoryId,
       colorId,
@@ -115,6 +117,10 @@ export async function PATCH(
       return new NextResponse("Size id is required", { status: 400 });
     }
 
+    if (!slug) {
+      return new NextResponse("Slug is required", { status: 400 });
+    }
+
     if (!images?.length) {
       return new NextResponse("Images are required", { status: 400 });
     }
@@ -144,6 +150,8 @@ export async function PATCH(
       },
       data: {
         name,
+        slug,
+        description,
         price,
         categoryId,
         colorId,

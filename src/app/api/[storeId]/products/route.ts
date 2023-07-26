@@ -15,6 +15,8 @@ export async function POST(
 
     const {
       name,
+      slug,
+      description,
       price,
       categoryId,
       colorId,
@@ -48,6 +50,10 @@ export async function POST(
       return new NextResponse("Size id is required", { status: 400 });
     }
 
+    if (!slug) {
+      return new NextResponse("Slug is required", { status: 400 });
+    }
+
     if (!images?.length) {
       return new NextResponse("Images are required", { status: 400 });
     }
@@ -70,7 +76,9 @@ export async function POST(
     const product = await db.product.create({
       data: {
         name,
+        slug,
         price,
+        description,
         isFeatured,
         isArchived,
         categoryId,

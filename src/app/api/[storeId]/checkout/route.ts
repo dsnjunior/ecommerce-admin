@@ -126,7 +126,6 @@ export async function POST(
 
   const shippingOptionParsed = shippingOptionSchema.safeParse(shippingOption);
   if (!shippingOptionParsed.success) {
-    console.log(shippingOptionParsed.error.message);
     return new NextResponse(shippingOptionParsed.error.message, {
       status: 400,
     });
@@ -171,9 +170,22 @@ export async function POST(
     deliveryDeadline.getDate() + shippingOptionParsed.data.PrazoEntrega
   );
 
+  const latestOrderCode = await db.order.findFirst({
+    where: {
+      storeId: params.storeId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: {
+      code: true,
+    },
+  });
+
   const order = await db.order.create({
     data: {
       ...shippingParsed.data,
+      code: (latestOrderCode?.code ?? 0) + 1,
       deliveryDeadline,
       shippingCost: shippingOptionParsed.data.Valor,
       storeId: params.storeId,

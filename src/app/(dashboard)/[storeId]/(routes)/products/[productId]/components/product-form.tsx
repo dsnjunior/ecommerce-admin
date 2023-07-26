@@ -9,6 +9,7 @@ import { toast } from "react-hot-toast";
 import { Trash } from "lucide-react";
 import { Category, Color, Image, Product, Size } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
+import slugify from "slugify";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -33,9 +34,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
   name: z.string().min(1),
+  slug: z.string().min(1),
+  description: z.string(),
   images: z.object({ url: z.string() }).array(),
   price: z.coerce.number().min(1),
   categoryId: z.string().min(1),
@@ -86,6 +90,7 @@ export const ProductForm = ({
       colorId: "",
       sizeId: "",
       name: "",
+      slug: "",
       price: 0,
       images: [],
       isFeatured: false,
@@ -195,9 +200,37 @@ export const ProductForm = ({
                       disabled={loading}
                       placeholder="Product name"
                       {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        form.setValue(
+                          "slug",
+                          slugify(e.target.value, { lower: true })
+                        );
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="slug"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Slug</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Product slug"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                  <FormDescription>
+                    The category slug used to generate the product URL.
+                    <br /> Eg.: <code>{"my.store/products/{slug}"}</code>
+                  </FormDescription>
                 </FormItem>
               )}
             />
@@ -357,6 +390,26 @@ export const ProductForm = ({
                 </FormItem>
               )}
             />
+
+            <div className="col-span-full">
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        disabled={loading}
+                        placeholder="Description"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
           <Button disabled={loading} className="ml-auto" type="submit">
             {action}
