@@ -226,12 +226,12 @@ export const SettingsForm = ({ initialData }: SettingsFormProps) => {
       <ApiAlert
         title="NEXT_PUBLIC_API_URL"
         variant="public"
-        description={`${origin}/api/${params.storeId}`}
+        description={`${origin}/v1/api/${params.storeId}`}
       />
       <ApiAlert
         title="GET"
         variant="public"
-        description={`${origin}/api/${params.storeId}/calculate-shipping`}
+        description={`${origin}/v1/api/${params.storeId}/calculate-shipping`}
       />
     </>
   );

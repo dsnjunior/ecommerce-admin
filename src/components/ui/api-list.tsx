@@ -13,7 +13,7 @@ export const ApiList = ({ entityName, entityIdName }: ApiListProps) => {
   const params = useParams();
   const origin = useOrigin();
 
-  const baseUrl = `${origin}/api/${params.storeId}`;
+  const baseUrl = `${origin}/v1/api/${params.storeId}`;
 
   return (
     <>
@@ -25,21 +25,6 @@ export const ApiList = ({ entityName, entityIdName }: ApiListProps) => {
       <ApiAlert
         title="GET"
         variant="public"
-        description={`${baseUrl}/${entityName}/{${entityIdName}}`}
-      />
-      <ApiAlert
-        title="POST"
-        variant="admin"
-        description={`${baseUrl}/${entityName}`}
-      />
-      <ApiAlert
-        title="PATCH"
-        variant="admin"
-        description={`${baseUrl}/${entityName}/{${entityIdName}}`}
-      />
-      <ApiAlert
-        title="DELETE"
-        variant="admin"
         description={`${baseUrl}/${entityName}/{${entityIdName}}`}
       />
     </>
