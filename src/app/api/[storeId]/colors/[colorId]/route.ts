@@ -57,6 +57,10 @@ export async function DELETE(
       },
     });
 
+    if (storeByUserId.contentUpdateWebhook) {
+      await fetch(storeByUserId.contentUpdateWebhook, { method: "POST" });
+    }
+
     return NextResponse.json(color);
   } catch (e) {
     const error = e as Error;
@@ -111,6 +115,10 @@ export async function PATCH(
         value,
       },
     });
+
+    if (storeByUserId.contentUpdateWebhook) {
+      await fetch(storeByUserId.contentUpdateWebhook, { method: "POST" });
+    }
 
     return NextResponse.json(color);
   } catch (e) {

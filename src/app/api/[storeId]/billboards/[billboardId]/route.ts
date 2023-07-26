@@ -58,6 +58,10 @@ export async function DELETE(
       },
     });
 
+    if (storeByUserId.contentUpdateWebhook) {
+      await fetch(storeByUserId.contentUpdateWebhook, { method: "POST" });
+    }
+
     return NextResponse.json(billboard);
   } catch (e) {
     const error = e as Error;
@@ -74,7 +78,7 @@ export async function PATCH(
 
     const body = await req.json();
 
-    const { label, imageUrl } = body;
+    const { label, imageUrl, isFeatured } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -103,6 +107,18 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
+    if (isFeatured) {
+      await db.billboard.updateMany({
+        where: {
+          storeId: params.storeId,
+          isFeatured: true,
+        },
+        data: {
+          isFeatured: false,
+        },
+      });
+    }
+
     const billboard = await db.billboard.update({
       where: {
         id: params.billboardId,
@@ -114,8 +130,13 @@ export async function PATCH(
         srcSet: srcSet(optimizeImage(imageUrl)),
         webpUrl: webp(imageUrl),
         webpSrcSet: srcSet(webp(imageUrl)),
+        isFeatured,
       },
     });
+
+    if (storeByUserId.contentUpdateWebhook) {
+      await fetch(storeByUserId.contentUpdateWebhook, { method: "POST" });
+    }
 
     return NextResponse.json(billboard);
   } catch (e) {

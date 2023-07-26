@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,10 +25,12 @@ import { Separator } from "@/components/ui/separator";
 import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
 import ImageUpload from "@/components/ui/image-upload";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const formSchema = z.object({
   label: z.string().min(1),
   imageUrl: z.string().min(1),
+  isFeatured: z.boolean().optional(),
 });
 
 type BillboardFormValues = z.infer<typeof formSchema>;
@@ -52,9 +55,10 @@ export const BillboardForm = ({ initialData }: BillboardFormProps) => {
 
   const form = useForm<BillboardFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || {
+    defaultValues: initialData ?? {
       label: "",
       imageUrl: "",
+      isFeatured: false,
     },
   });
 
@@ -158,6 +162,33 @@ export const BillboardForm = ({ initialData }: BillboardFormProps) => {
                     />
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="md:grid md:grid-cols-3">
+            <FormField
+              control={form.control}
+              name="isFeatured"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      // @ts-ignore
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Featured</FormLabel>
+                    <FormDescription>
+                      This billboard will appear on the home page.
+                      <br />
+                      <span className="text-gray-500">
+                        The current one will be replaced.
+                      </span>
+                    </FormDescription>
+                  </div>
                 </FormItem>
               )}
             />

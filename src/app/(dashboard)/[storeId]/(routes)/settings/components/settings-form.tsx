@@ -27,6 +27,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { SubHeading } from "@/components/ui/sub-heading";
 
 const formSchema = z.object({
   name: z.string().min(2),
@@ -34,6 +35,7 @@ const formSchema = z.object({
   storeUrl: z.string().url().nonempty(),
   storeSuccessSaleUrl: z.string().url().nonempty(),
   storeCancelledSaleUrl: z.string().url().nonempty(),
+  contentUpdateWebhook: z.string().url().nonempty(),
 });
 
 type SettingsFormValues = z.infer<typeof formSchema>;
@@ -217,6 +219,41 @@ export const SettingsForm = ({ initialData }: SettingsFormProps) => {
               )}
             />
           </div>
+
+          <Button disabled={loading} className="ml-auto" type="submit">
+            Save changes
+          </Button>
+
+          <Separator />
+          <SubHeading
+            title="Technical settings"
+            description="Manage store technical preferences"
+          />
+
+          <div className="grid grid-cols-2 gap-8">
+            <FormField
+              control={form.control}
+              name="contentUpdateWebhook"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Store update webhook URL</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Store update webhook URL"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                  <FormDescription>
+                    The webhook URL which triggers the store deploy to be called
+                    when data is updated.
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+          </div>
+
           <Button disabled={loading} className="ml-auto" type="submit">
             Save changes
           </Button>

@@ -26,6 +26,7 @@ model Store {
   products              Product[]       @relation("StoreToProduct")
   orders                Order[]         @relation("StoreToOrder")
   emailSettings         EmailSettings?
+  contentUpdateWebhook  String          @default("")
 
   createdAt             DateTime        @default(now())
   updatedAt             DateTime        @updatedAt
@@ -76,6 +77,7 @@ model Billboard {
   store       Store       @relation("StoreToBillboard", fields: [storeId], references: [id])
   label       String
   categories  Category[]
+  isFeatured  Boolean     @default(false)
 
   imageUrl    String
   srcSet      String      @default("") @db.Text

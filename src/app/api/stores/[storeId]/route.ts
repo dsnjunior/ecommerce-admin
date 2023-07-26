@@ -17,6 +17,7 @@ export async function PATCH(
       storeUrl,
       storeSuccessSaleUrl,
       storeCancelledSaleUrl,
+      contentUpdateWebhook,
     } = body;
 
     if (!userId) {
@@ -45,6 +46,12 @@ export async function PATCH(
       });
     }
 
+    if (!contentUpdateWebhook) {
+      return new NextResponse("Content update webhook is required", {
+        status: 400,
+      });
+    }
+
     if (!params.storeId) {
       return new NextResponse("Store id is required", { status: 400 });
     }
@@ -60,6 +67,7 @@ export async function PATCH(
         storeUrl,
         storeSuccessSaleUrl,
         storeCancelledSaleUrl,
+        contentUpdateWebhook,
       },
     });
 

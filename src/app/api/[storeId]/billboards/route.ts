@@ -13,7 +13,7 @@ export async function POST(
 
     const body = await req.json();
 
-    const { label, imageUrl } = body;
+    const { label, imageUrl, isFeatured } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -42,6 +42,18 @@ export async function POST(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
+    if (isFeatured) {
+      await db.billboard.updateMany({
+        where: {
+          storeId: params.storeId,
+          isFeatured: true,
+        },
+        data: {
+          isFeatured: false,
+        },
+      });
+    }
+
     const billboard = await db.billboard.create({
       data: {
         label,
@@ -51,8 +63,13 @@ export async function POST(
         webpUrl: webp(imageUrl),
         webpSrcSet: srcSet(webp(imageUrl)),
         storeId: params.storeId,
+        isFeatured,
       },
     });
+
+    if (storeByUserId.contentUpdateWebhook) {
+      await fetch(storeByUserId.contentUpdateWebhook, { method: "POST" });
+    }
 
     return NextResponse.json(billboard);
   } catch (e) {

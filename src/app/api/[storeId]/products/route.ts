@@ -99,6 +99,10 @@ export async function POST(
       },
     });
 
+    if (storeByUserId.contentUpdateWebhook) {
+      await fetch(storeByUserId.contentUpdateWebhook, { method: "POST" });
+    }
+
     return NextResponse.json(product);
   } catch (e) {
     const error = e as Error;
