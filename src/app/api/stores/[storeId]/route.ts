@@ -47,12 +47,6 @@ export async function PATCH(
       });
     }
 
-    if (!contentUpdateWebhook) {
-      return new NextResponse("Content update webhook is required", {
-        status: 400,
-      });
-    }
-
     if (!currency) {
       return new NextResponse("Currency is required", { status: 400 });
     }

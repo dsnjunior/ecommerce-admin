@@ -22,6 +22,7 @@ const BillboardsPage = async ({ params }: BillboardsPageProps) => {
     id: item.id,
     name: item.name,
     value: item.value,
+    slug: item.slug,
     createdAt: dateTimeFormat(item.createdAt),
   }));
 

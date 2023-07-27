@@ -12,7 +12,7 @@ export async function POST(
 
     const body = await req.json();
 
-    const { name, value } = body;
+    const { name, slug, value } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -24,6 +24,10 @@ export async function POST(
 
     if (!value) {
       return new NextResponse("Value is required", { status: 400 });
+    }
+
+    if (!slug) {
+      return new NextResponse("Slug is required", { status: 400 });
     }
 
     if (!params.storeId) {
@@ -44,6 +48,7 @@ export async function POST(
     const size = await db.size.create({
       data: {
         name,
+        slug,
         value,
         storeId: params.storeId,
       },

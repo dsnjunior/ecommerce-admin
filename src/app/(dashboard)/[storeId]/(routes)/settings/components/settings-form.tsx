@@ -45,7 +45,7 @@ const formSchema = z.object({
   storeUrl: z.string().url().nonempty(),
   storeSuccessSaleUrl: z.string().url().nonempty(),
   storeCancelledSaleUrl: z.string().url().nonempty(),
-  contentUpdateWebhook: z.string().url().nonempty(),
+  contentUpdateWebhook: z.string().url().or(z.string().max(0)),
 });
 
 type SettingsFormValues = z.infer<typeof formSchema>;

@@ -9,12 +9,14 @@ import { toast } from "react-hot-toast";
 import { Trash } from "lucide-react";
 import { Size } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
+import slugify from "slugify";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,6 +28,7 @@ import { AlertModal } from "@/components/modals/alert-modal";
 
 const formSchema = z.object({
   name: z.string().min(1),
+  slug: z.string().min(1),
   value: z.string().min(1),
 });
 
@@ -49,8 +52,9 @@ export const SizeForm = ({ initialData }: SizeFormProps) => {
 
   const form = useForm<SizeFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || {
+    defaultValues: initialData ?? {
       name: "",
+      slug: "",
       value: "",
     },
   });
@@ -129,9 +133,40 @@ export const SizeForm = ({ initialData }: SizeFormProps) => {
                       disabled={loading}
                       placeholder="Size name"
                       {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        form.setValue(
+                          "slug",
+                          slugify(e.target.value, { lower: true })
+                        );
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="gap-8 md:grid md:grid-cols-3">
+            <FormField
+              control={form.control}
+              name="slug"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Slug</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Category slug"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                  <FormDescription>
+                    The size slug used to generate the size URL or filter.
+                    <br /> Eg.: <code>{"my.store/sizes/{slug}"}</code>,{" "}
+                    <code>{"my.store/products?size={slug}"}</code>
+                  </FormDescription>
                 </FormItem>
               )}
             />

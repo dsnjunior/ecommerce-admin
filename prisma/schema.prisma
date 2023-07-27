@@ -105,7 +105,7 @@ model Category {
   billboardId String
   billboard   Billboard   @relation(fields: [billboardId], references: [id])
   name        String
-  slug        String      @default("")
+  slug        String
   products    Product[]   @relation("CategoryToProduct")
 
   createdAt   DateTime    @default(now())
@@ -120,6 +120,7 @@ model Size {
   storeId     String
   store       Store       @relation("StoreToSize", fields: [storeId], references: [id])
   name        String
+  slug        String
   value       String
   products    Product[]   @relation("SizeToProduct")
 
@@ -134,6 +135,7 @@ model Color {
   storeId     String
   store       Store       @relation("StoreToColor", fields: [storeId], references: [id])
   name        String
+  slug        String
   value       String
   products    Product[]   @relation("ColorToProduct")
 
@@ -150,7 +152,7 @@ model Product {
   categoryId  String
   category    Category    @relation("CategoryToProduct", fields: [categoryId], references: [id])
   name        String
-  slug        String      @default("")
+  slug        String
   description String      @default("") @db.Text
   price       Int
   isFeatured  Boolean     @default(false)

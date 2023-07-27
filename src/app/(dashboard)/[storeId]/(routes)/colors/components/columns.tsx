@@ -7,6 +7,7 @@ import { CellAction } from "./cell-action";
 export type ColorColumn = {
   id: string;
   name: string;
+  slug: string;
   value: string;
   createdAt: string;
 };
@@ -30,6 +31,10 @@ export const columns: ColumnDef<ColorColumn>[] = [
         />
       </div>
     ),
+  },
+  {
+    accessorKey: "slug",
+    header: "Slug",
   },
   {
     accessorKey: "createdAt",
