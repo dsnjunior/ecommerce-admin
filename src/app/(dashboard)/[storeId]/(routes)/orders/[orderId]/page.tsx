@@ -42,7 +42,7 @@ const OrderPage = async ({ params }: OrdersPageProps) => {
   const formattedProducts: ProductColumn[] = order?.orderItems.map((item) => ({
     id: item.id,
     name: item.product.name,
-    price: currencyFormat(item.price),
+    price: currencyFormat(item.price, order.currency),
     category: item.product.category.name,
     size: item.product.size.name,
     color: item.product.color,
@@ -83,15 +83,18 @@ const OrderPage = async ({ params }: OrdersPageProps) => {
               <CustomerDetail label="Zip Code" value={order.destination} />
               <CustomerDetail
                 label="Total"
-                value={currencyFormat(order.shippingCost + productsValue)}
+                value={currencyFormat(
+                  order.shippingCost + productsValue,
+                  order.currency
+                )}
               />
               <CustomerDetail
                 label="Shipping Cost"
-                value={currencyFormat(order.shippingCost)}
+                value={currencyFormat(order.shippingCost, order.currency)}
               />
               <CustomerDetail
                 label="Products Value"
-                value={currencyFormat(productsValue)}
+                value={currencyFormat(productsValue, order.currency)}
               />
             </div>
           </div>

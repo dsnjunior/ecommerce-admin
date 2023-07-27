@@ -28,10 +28,20 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { SubHeading } from "@/components/ui/sub-heading";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const currencies = ["USD", "EUR", "BRL"] as const;
 
 const formSchema = z.object({
   name: z.string().min(2),
   zipCode: z.string().min(8).max(8),
+  currency: z.enum(currencies),
   storeUrl: z.string().url().nonempty(),
   storeSuccessSaleUrl: z.string().url().nonempty(),
   storeCancelledSaleUrl: z.string().url().nonempty(),
@@ -148,6 +158,40 @@ export const SettingsForm = ({ initialData }: SettingsFormProps) => {
                   </FormControl>
                   <FormMessage />
                   <FormDescription>Only numbers.</FormDescription>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="currency"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Currency</FormLabel>
+                  <Select
+                    disabled={loading}
+                    // @ts-ignore
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Select a currency"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {currencies.map((currency) => (
+                        <SelectItem key={currency} value={currency}>
+                          {currency}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
                 </FormItem>
               )}
             />

@@ -11,11 +11,18 @@ datasource db {
   relationMode = "prisma"
 }
 
+enum Currency {
+  USD
+  BRL
+  EUR
+}
+
 model Store {
   id                    String          @id @default(cuid())
   name                  String
   userId                String
   zipCode               String          @default("")
+  currency              Currency        @default(BRL)
   storeUrl              String          @default("")
   storeSuccessSaleUrl   String          @default("")
   storeCancelledSaleUrl String          @default("")
@@ -189,6 +196,7 @@ model Order {
   orderItems        OrderItem[]
   isPaid            Boolean     @default(false)
   archived          Boolean     @default(false)
+  currency          Currency
 
   destination       String
   localidade        String

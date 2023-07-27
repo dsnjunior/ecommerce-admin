@@ -14,6 +14,7 @@ export async function PATCH(
     const {
       name,
       zipCode,
+      currency,
       storeUrl,
       storeSuccessSaleUrl,
       storeCancelledSaleUrl,
@@ -52,6 +53,10 @@ export async function PATCH(
       });
     }
 
+    if (!currency) {
+      return new NextResponse("Currency is required", { status: 400 });
+    }
+
     if (!params.storeId) {
       return new NextResponse("Store id is required", { status: 400 });
     }
@@ -64,6 +69,7 @@ export async function PATCH(
       data: {
         name,
         zipCode,
+        currency,
         storeUrl,
         storeSuccessSaleUrl,
         storeCancelledSaleUrl,

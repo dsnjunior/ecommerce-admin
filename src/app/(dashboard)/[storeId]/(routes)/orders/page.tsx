@@ -37,7 +37,8 @@ const OrdersPage = async ({ params }: OrdersPageProps) => {
       item.orderItems.reduce(
         (acc, orderItem) => acc + orderItem.product.price,
         0
-      )
+      ),
+      item.currency
     ),
     createdAt: dateTimeFormat(item.createdAt),
   }));

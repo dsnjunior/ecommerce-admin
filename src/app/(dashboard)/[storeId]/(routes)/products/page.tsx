@@ -9,6 +9,15 @@ interface ProductsPageProps {
 }
 
 const ProductsPage = async ({ params }: ProductsPageProps) => {
+  const store = await db.store.findUniqueOrThrow({
+    where: {
+      id: params.storeId,
+    },
+    select: {
+      currency: true,
+    },
+  });
+
   const products = await db.product.findMany({
     where: {
       storeId: params.storeId,
@@ -40,7 +49,7 @@ const ProductsPage = async ({ params }: ProductsPageProps) => {
     id: item.id,
     slug: item.slug,
     name: item.name,
-    price: currencyFormat(item.price),
+    price: currencyFormat(item.price, store.currency),
     category: item.category.name,
     size: item.size.name,
     color: item.color,

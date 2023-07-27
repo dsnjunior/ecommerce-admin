@@ -97,6 +97,7 @@ export async function POST(
       storeSuccessSaleUrl: true,
       storeCancelledSaleUrl: true,
       emailSettings: true,
+      currency: true,
       // TODO: order categories by some criteria
       categories: {
         take: 4,
@@ -155,7 +156,7 @@ export async function POST(
       quantity:
         productsParsed.data.find((p) => p.id === product.id)?.quantity ?? 1,
       price_data: {
-        currency: "BRL",
+        currency: store.currency,
         product_data: {
           name: product.name,
           images: product.images.map((image) => image.url),
@@ -190,6 +191,7 @@ export async function POST(
       shippingCost: shippingOptionParsed.data.Valor,
       storeId: params.storeId,
       isPaid: false,
+      currency: store.currency,
       orderItems: {
         create: productIds.map((productId: string) => ({
           product: {
@@ -227,7 +229,7 @@ export async function POST(
         shipping_rate_data: {
           display_name: "Entrega Padrão",
           fixed_amount: {
-            currency: "BRL",
+            currency: store.currency,
             amount: shippingOptionParsed.data.Valor,
           },
           delivery_estimate: {

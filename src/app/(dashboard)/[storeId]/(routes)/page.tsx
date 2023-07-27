@@ -2,15 +2,21 @@ import { CreditCard, DollarSign, Package } from "lucide-react";
 
 import { Separator } from "@/components/ui/separator";
 import { Overview } from "@/components/overview";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
-import { currencyFormat } from "@/lib/utils";
+import { cn, currencyFormat } from "@/lib/utils";
 import { db } from "@/lib/db";
 
 import getTotalRevenue from "@/actions/get-total-revenue";
 import getSalesCount from "@/actions/get-sales-count";
 import getGraphRevenue from "@/actions/get-graph-revenue";
-import getStockCount from "@/actions/get-stock-count";
+import getActiveProducts from "@/actions/get-active-products";
 
 interface DashboardPageProps {
   params: {
@@ -19,12 +25,14 @@ interface DashboardPageProps {
 }
 
 const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
-  const totalRevenue = await getTotalRevenue(params.storeId);
+  const totalRevenue = Array.from(
+    (await getTotalRevenue(params.storeId)).entries()
+  );
   const graphRevenue = await getGraphRevenue(params.storeId);
   const salesCount = await getSalesCount(params.storeId);
-  const stockCount = await getStockCount(params.storeId);
+  const stockCount = await getActiveProducts(params.storeId);
 
-  const store = await db.store.findFirst({
+  const store = await db.store.findFirstOrThrow({
     where: {
       id: params.storeId,
     },
@@ -50,9 +58,16 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {currencyFormat(totalRevenue)}
-              </div>
+              {totalRevenue.map(([key, value], index) => (
+                <div
+                  key={key}
+                  className={cn("text-2xl font-bold", {
+                    "text-lg before:content-['+_']": index > 0,
+                  })}
+                >
+                  {currencyFormat(value, key)}
+                </div>
+              ))}
             </CardContent>
           </Card>
           <Card>
@@ -67,7 +82,7 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Products In Stock
+                Active Products
               </CardTitle>
               <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -81,8 +96,19 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
             <CardTitle>Overview</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
-            <Overview data={graphRevenue} />
+            <Overview
+              data={graphRevenue}
+              currency={totalRevenue?.[0]?.[0] ?? "USD"}
+            />
           </CardContent>
+          {totalRevenue.length > 1 && (
+            <CardFooter>
+              <div className="mt-2 text-sm text-muted-foreground">
+                * If you have orders paid in multiple currencies, this data is
+                likely to be incorrect.
+              </div>
+            </CardFooter>
+          )}
         </Card>
       </div>
     </div>
