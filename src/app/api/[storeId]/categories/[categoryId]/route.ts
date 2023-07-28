@@ -46,7 +46,18 @@ export async function DELETE(
     const storeByUserId = await db.store.findFirst({
       where: {
         id: params.storeId,
-        userId,
+        OR: [
+          {
+            userId,
+          },
+          {
+            collaborators: {
+              some: {
+                userId,
+              },
+            },
+          },
+        ],
       },
     });
 
@@ -105,7 +116,18 @@ export async function PATCH(
     const storeByUserId = await db.store.findFirst({
       where: {
         id: params.storeId,
-        userId,
+        OR: [
+          {
+            userId,
+          },
+          {
+            collaborators: {
+              some: {
+                userId,
+              },
+            },
+          },
+        ],
       },
     });
 

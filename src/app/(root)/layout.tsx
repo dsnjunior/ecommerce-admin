@@ -16,7 +16,18 @@ export default async function SetupLayout({ children }: SetupLayoutProps) {
 
   const store = await db.store.findFirst({
     where: {
-      userId,
+      OR: [
+        {
+          userId,
+        },
+        {
+          collaborators: {
+            some: {
+              userId,
+            },
+          },
+        },
+      ],
     },
   });
 

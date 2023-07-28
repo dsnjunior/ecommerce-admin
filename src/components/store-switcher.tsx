@@ -28,9 +28,13 @@ type PopoverTriggerProps = React.ComponentPropsWithoutRef<
 
 interface StoreSwitcherProps extends PopoverTriggerProps {
   items: Record<string, any>[];
+  collaboratorItems: Record<string, any>[];
 }
 
-export function StoreSwitcher({ items }: StoreSwitcherProps) {
+export function StoreSwitcher({
+  items,
+  collaboratorItems,
+}: StoreSwitcherProps) {
   const storeModal = useStoreModal();
   const params = useParams();
   const router = useRouter();
@@ -40,7 +44,12 @@ export function StoreSwitcher({ items }: StoreSwitcherProps) {
     value: item.id,
   }));
 
-  const currentStore = formattedItems.find(
+  const formattedCollabItems = collaboratorItems.map((item) => ({
+    label: item.name,
+    value: item.id,
+  }));
+
+  const currentStore = [...formattedItems, ...formattedCollabItems].find(
     (item) => item.value === params.storeId
   );
 
@@ -72,6 +81,26 @@ export function StoreSwitcher({ items }: StoreSwitcherProps) {
             <CommandEmpty>No store found.</CommandEmpty>
             <CommandGroup>
               {formattedItems.map((item) => (
+                <CommandItem
+                  key={item.value}
+                  onSelect={() => onStoreSelect(item)}
+                  className="text-sm"
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      currentStore?.value === item.value
+                        ? "opacity-100"
+                        : "opacity-0"
+                    )}
+                  />
+                  {item.label}
+                </CommandItem>
+              ))}
+              {!!formattedItems.length && !!formattedCollabItems.length && (
+                <CommandSeparator className="my-1" />
+              )}
+              {formattedCollabItems.map((item) => (
                 <CommandItem
                   key={item.value}
                   onSelect={() => onStoreSelect(item)}

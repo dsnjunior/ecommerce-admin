@@ -25,7 +25,18 @@ export default async function DashboardLayout({
   const store = await db.store.findFirst({
     where: {
       id: params.storeId,
-      userId,
+      OR: [
+        {
+          userId,
+        },
+        {
+          collaborators: {
+            some: {
+              userId,
+            },
+          },
+        },
+      ],
     },
   });
 

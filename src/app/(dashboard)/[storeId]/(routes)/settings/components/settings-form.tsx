@@ -7,7 +7,7 @@ import ky from "ky";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Trash } from "lucide-react";
-import { Store } from "@prisma/client";
+import { Collaborator, Store, User, UserEmailAddress } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
 
 import { toast } from "@/lib/toast";
@@ -35,6 +35,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+import { CollaboratorsRow } from "./collaborators-row";
 
 const currencies = ["USD", "EUR", "BRL"] as const;
 
@@ -46,12 +49,17 @@ const formSchema = z.object({
   storeSuccessSaleUrl: z.string().url().nonempty(),
   storeCancelledSaleUrl: z.string().url().nonempty(),
   contentUpdateWebhook: z.string().url().or(z.string().max(0)),
+  collaboratorsToInvite: z.string().optional(),
 });
 
 type SettingsFormValues = z.infer<typeof formSchema>;
 
 interface SettingsFormProps {
-  initialData: Store;
+  initialData: Store & {
+    collaborators: (Collaborator & {
+      user: User & { emailAddresses: UserEmailAddress[] };
+    })[];
+  };
 }
 
 export const SettingsForm = ({ initialData }: SettingsFormProps) => {
@@ -61,6 +69,9 @@ export const SettingsForm = ({ initialData }: SettingsFormProps) => {
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [currentCollaborators, setCurrentCollaborators] = useState(
+    initialData.collaborators
+  );
 
   const form = useForm<SettingsFormValues>({
     resolver: zodResolver(formSchema),
@@ -70,9 +81,29 @@ export const SettingsForm = ({ initialData }: SettingsFormProps) => {
   const onSubmit = async (data: SettingsFormValues) => {
     try {
       setLoading(true);
-      await ky.patch(`/api/stores/${params.storeId}`, { json: data });
+
+      const { collaboratorsToInvite, ...toSubmit } = data;
+
+      const keepCollaborators = currentCollaborators.flatMap((collaborator) =>
+        collaborator.user.emailAddresses.map(
+          (emailAddress) => emailAddress.email
+        )
+      );
+
+      const newCollaborators = collaboratorsToInvite
+        ? collaboratorsToInvite
+            .split(",")
+            .map((collaborator) => collaborator.trim())
+        : [];
+
+      const collaborators = [...keepCollaborators, ...newCollaborators];
+
+      const json = { ...toSubmit, collaborators };
+
+      await ky.patch(`/api/stores/${params.storeId}`, { json });
       router.refresh();
       toast.success("Store updated.");
+      form.setValue("collaboratorsToInvite", "");
     } catch (error: any) {
       toast.error("Something went wrong.");
     } finally {
@@ -260,6 +291,58 @@ export const SettingsForm = ({ initialData }: SettingsFormProps) => {
                     Eg.: <code>https://store.com/checkout/cancelled</code>
                   </FormDescription>
                 </FormItem>
+              )}
+            />
+          </div>
+
+          <Button disabled={loading} className="ml-auto" type="submit">
+            Save changes
+          </Button>
+
+          <Separator />
+          <SubHeading
+            title="Collaborators"
+            description="Manage who can access and edit this store"
+          />
+
+          <div>
+            <FormField
+              control={form.control}
+              name="collaboratorsToInvite"
+              render={({ field }) => (
+                <>
+                  <FormItem>
+                    <FormLabel>Add user email</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={loading}
+                        placeholder="Add user email"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    <FormDescription>
+                      Add multiple users by separating them with a comma.
+                    </FormDescription>
+                  </FormItem>
+                  <Alert variant="warn" className="mt-4">
+                    <AlertDescription>
+                      You can only invite users who have an account on our site.
+                    </AlertDescription>
+                  </Alert>
+                  {!!currentCollaborators.length && (
+                    <CollaboratorsRow
+                      data={currentCollaborators}
+                      onRemove={(collaboratorId) => {
+                        setCurrentCollaborators((current) =>
+                          current.filter(
+                            (collaborator) => collaborator.id !== collaboratorId
+                          )
+                        );
+                      }}
+                    />
+                  )}
+                </>
               )}
             />
           </div>

@@ -34,7 +34,18 @@ export async function POST(
     const storeByUserId = await db.store.findFirst({
       where: {
         id: params.storeId,
-        userId,
+        OR: [
+          {
+            userId,
+          },
+          {
+            collaborators: {
+              some: {
+                userId,
+              },
+            },
+          },
+        ],
       },
     });
 

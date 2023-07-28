@@ -17,10 +17,46 @@ enum Currency {
   EUR
 }
 
+model UserEmailAddress {
+  id                String          @id
+  userId            String
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email             String          @unique
+
+  @@index([userId])
+}
+
+model User {
+  id                  String              @id @unique
+  stores              Store[]             @relation("OwnerToStore")
+  collaborator        Collaborator[]
+  emailAddresses      UserEmailAddress[]
+  firstName           String
+  lastName            String              @default("")
+  imageUrl            String              @db.Text @default("")
+  profileImageUrl     String              @db.Text @default("")
+}
+
+model Collaborator {
+  id          String      @id @default(cuid())
+  storeId     String
+  store       Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([storeId])
+  @@index([userId])
+}
+
 model Store {
   id                    String          @id @default(cuid())
   name                  String
   userId                String
+  user                  User            @relation("OwnerToStore", fields: [userId], references: [id], onDelete: Cascade)
+  collaborators         Collaborator[]
   zipCode               String          @default("")
   currency              Currency        @default(BRL)
   storeUrl              String          @default("")
@@ -37,6 +73,8 @@ model Store {
 
   createdAt             DateTime        @default(now())
   updatedAt             DateTime        @updatedAt
+
+  @@index([userId])
 }
 
 model EmailSettings {
@@ -81,7 +119,7 @@ model EmailSettings {
 model Billboard {
   id          String      @id @default(cuid())
   storeId     String
-  store       Store       @relation("StoreToBillboard", fields: [storeId], references: [id])
+  store       Store       @relation("StoreToBillboard", fields: [storeId], references: [id], onDelete: Cascade)
   label       String
   categories  Category[]
   isFeatured  Boolean     @default(false)
@@ -101,7 +139,7 @@ model Billboard {
 model Category {
   id          String      @id @default(cuid())
   storeId     String
-  store       Store       @relation("StoreToCategory", fields: [storeId], references: [id])
+  store       Store       @relation("StoreToCategory", fields: [storeId], references: [id], onDelete: Cascade)
   billboardId String
   billboard   Billboard   @relation(fields: [billboardId], references: [id])
   name        String
@@ -118,7 +156,7 @@ model Category {
 model Size {
   id          String      @id @default(cuid())
   storeId     String
-  store       Store       @relation("StoreToSize", fields: [storeId], references: [id])
+  store       Store       @relation("StoreToSize", fields: [storeId], references: [id], onDelete: Cascade)
   name        String
   slug        String
   value       String
@@ -133,7 +171,7 @@ model Size {
 model Color {
   id          String      @id @default(cuid())
   storeId     String
-  store       Store       @relation("StoreToColor", fields: [storeId], references: [id])
+  store       Store       @relation("StoreToColor", fields: [storeId], references: [id], onDelete: Cascade)
   name        String
   slug        String
   value       String
@@ -148,7 +186,7 @@ model Color {
 model Product {
   id          String      @id @default(cuid())
   storeId     String
-  store       Store       @relation("StoreToProduct", fields: [storeId], references: [id])
+  store       Store       @relation("StoreToProduct", fields: [storeId], references: [id], onDelete: Cascade)
   categoryId  String
   category    Category    @relation("CategoryToProduct", fields: [categoryId], references: [id])
   name        String
@@ -194,7 +232,7 @@ model Order {
   id                String      @id @default(cuid())
   code              Int         @unique
   storeId           String
-  store             Store       @relation("StoreToOrder", fields: [storeId], references: [id])
+  store             Store       @relation("StoreToOrder", fields: [storeId], references: [id], onDelete: Cascade)
   orderItems        OrderItem[]
   isPaid            Boolean     @default(false)
   archived          Boolean     @default(false)
@@ -225,7 +263,7 @@ model Order {
 model OrderItem {
   id          String      @id @default(cuid())
   orderId     String
-  order       Order       @relation(fields: [orderId], references: [id])
+  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId   String
   product     Product     @relation(fields: [productId], references: [id])
   quantity    Int

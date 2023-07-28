@@ -18,10 +18,23 @@ export const Navbar = async () => {
     },
   });
 
+  const collaboratorStores = await db.store.findMany({
+    where: {
+      collaborators: {
+        some: {
+          userId,
+        },
+      },
+    },
+  });
+
   return (
     <div className="flex items-center border-b p-4">
-      <StoreSwitcher items={stores} />
-      <MainNav className="mx-6" />
+      <StoreSwitcher items={stores} collaboratorItems={collaboratorStores} />
+      <MainNav
+        className="mx-6"
+        collaboratorStores={collaboratorStores.map((store) => store.id)}
+      />
       <div className="ml-auto flex items-center space-x-4">
         <UserButton afterSignOutUrl="/" />
       </div>

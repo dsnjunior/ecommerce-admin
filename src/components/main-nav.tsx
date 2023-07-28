@@ -5,14 +5,19 @@ import { useParams, usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
+interface MainNavProps extends React.HTMLAttributes<HTMLElement> {
+  collaboratorStores: string[];
+}
+
 export function MainNav({
   className,
+  collaboratorStores,
   ...props
-}: React.HTMLAttributes<HTMLElement>) {
+}: MainNavProps) {
   const pathname = usePathname();
   const params = useParams();
 
-  const routes = [
+  const defaultRoutes = [
     {
       href: `/${params.storeId}`,
       label: "Overview",
@@ -48,6 +53,9 @@ export function MainNav({
       label: "Orders",
       active: pathname === `/${params.storeId}/orders`,
     },
+  ];
+
+  const ownerRoutes = [
     {
       href: `/${params.storeId}/settings`,
       label: "Settings",
@@ -59,6 +67,10 @@ export function MainNav({
       active: pathname === `/${params.storeId}/email-settings`,
     },
   ];
+
+  const routes = collaboratorStores.includes(params.storeId)
+    ? defaultRoutes
+    : defaultRoutes.concat(ownerRoutes);
 
   return (
     <nav

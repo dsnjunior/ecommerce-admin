@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs";
 
 import { db } from "@/lib/db";
+import { Collaborator } from "@prisma/client";
 
 export async function PATCH(
   req: NextRequest,
@@ -19,6 +20,7 @@ export async function PATCH(
       storeSuccessSaleUrl,
       storeCancelledSaleUrl,
       contentUpdateWebhook,
+      collaborators,
     } = body;
 
     if (!userId) {
@@ -51,14 +53,38 @@ export async function PATCH(
       return new NextResponse("Currency is required", { status: 400 });
     }
 
+    if (
+      collaborators &&
+      (!Array.isArray(collaborators) ||
+        (collaborators.length &&
+          collaborators.some((value) => typeof value !== "string")))
+    ) {
+      return new NextResponse("Collaborators must be an array of strings", {
+        status: 400,
+      });
+    }
+
     if (!params.storeId) {
       return new NextResponse("Store id is required", { status: 400 });
     }
 
-    const store = await db.store.updateMany({
+    const userCanEditStore = await db.store.findFirst({
       where: {
         id: params.storeId,
         userId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!userCanEditStore) {
+      return new NextResponse("Unauthorized", { status: 403 });
+    }
+
+    const store = await db.store.update({
+      where: {
+        id: params.storeId,
       },
       data: {
         name,
@@ -68,8 +94,45 @@ export async function PATCH(
         storeSuccessSaleUrl,
         storeCancelledSaleUrl,
         contentUpdateWebhook,
+        collaborators: {
+          deleteMany: {},
+        },
       },
     });
+
+    if (collaborators) {
+      const collaboratorsEmails: string[] = collaborators;
+
+      const collaboratorsData = await db.user.findMany({
+        where: {
+          emailAddresses: {
+            some: {
+              email: {
+                in: collaboratorsEmails,
+              },
+            },
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      await db.store.update({
+        where: {
+          id: params.storeId,
+        },
+        data: {
+          collaborators: {
+            createMany: {
+              data: collaboratorsData.map((collaborator) => ({
+                userId: collaborator.id,
+              })),
+            },
+          },
+        },
+      });
+    }
 
     return NextResponse.json(store);
   } catch (e) {

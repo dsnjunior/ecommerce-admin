@@ -22,6 +22,17 @@ const SettingsPage = async ({ params }: SettingsPageProps) => {
       userId,
       id: params.storeId,
     },
+    include: {
+      collaborators: {
+        include: {
+          user: {
+            include: {
+              emailAddresses: true,
+            },
+          },
+        },
+      },
+    },
   });
 
   if (!store) {
